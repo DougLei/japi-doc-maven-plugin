@@ -7,10 +7,72 @@
 			<executions>
 				<execution>
 					<goals>
-						<goal>test</goal>
+						<goal>apiDocBuilder</goal>
 					</goals>
+					
 					<configuration>
+						<!-- 
+							生成api文档的类型, 值包括 [zip, folder], 不区分大小写, 默认值为zip
+							zip标识生成压缩包, folder标识生成文件夹
+						-->
+						<apiDocType>zip</apiDocType>
+						<!-- 生成api文档的名称和标题, 默认名为 api文档 -->
+						<name>api文档</name>
+						<!-- api版本, 默认为1.0 -->
+						<version></version>
+						<!-- 生成api文档的绝对路径, 默认在当前项目的target目录下 -->
+						<path></path>
 						
+						<!-- api作者, 默认为当前计算机的名称 -->
+						<authors>
+							<author>DougLei</author>
+						</authors>
+						
+						<!-- api开发环境的url -->
+						<devEnvironmentUrls>
+							<devEnvironmentUrl>http://localhost:8080/dev</devEnvironmentUrl>
+						</devEnvironmentUrls>
+						<!-- api测试环境的url -->
+						<testEnvironmentUrls>
+							<testEnvironmentUrl>http://localhost:8080/test</testEnvironmentUrl>
+						</testEnvironmentUrls>
+						<!-- api生产环境的url -->
+						<prodEnvironmentUrls>
+							<prodEnvironmentUrl>http://localhost:8080/prod</prodEnvironmentUrl>
+						</prodEnvironmentUrls>
+						
+						<!-- 通用的请求头配置类 -->
+						<header>
+							<!-- 
+								通用参数的结构, 值包括 [object, array, object_or_array], 不区分大小写, 默认值为object
+								object标识为对象结构, array标识为数组/集合结构, object_or_array标识为对象或数组/集合结构
+							-->
+							<structureType>object</structureType>
+							<!-- 对应配置类的全路径 -->
+							<clz>com.xxx.XXXClasspath</clz>
+						</header>
+						<!-- 通用的请求URL配置类 -->
+						<url>
+							<!-- 同header标签 -->
+							<structureType></structureType>
+							<clz></clz>
+						</url>
+						<!-- 通用的请求体配置类 -->
+						<request>
+							<!-- 同header标签 -->
+							<structureType></structureType>
+							<clz></clz>
+						</request>
+						<!-- 通用的响应体配置类 -->
+						<response>
+							<!-- 同header标签 -->
+							<structureType></structureType>
+							<clz></clz>
+						</response>
+						
+						<scanPackages>
+							<scanPackage>com</scanPackage>
+						</scanPackages>
 					</configuration>
 				</execution>
 			</executions>

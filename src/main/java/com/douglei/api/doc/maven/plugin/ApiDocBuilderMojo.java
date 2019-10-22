@@ -37,21 +37,21 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	@Parameter
 	private String name;
 	/**
+	 * api版本, 默认为1.0
+	 */
+	@Parameter
+	private String version;
+	/**
 	 * 生成api文档的绝对路径, 默认在当前项目的target目录下
 	 */
 	@Parameter
 	private String path;
-
+	
 	/**
 	 * api作者, 默认为当前计算机的名称
 	 */
 	@Parameter
 	private String[] authors;
-	/**
-	 * 版本, 默认为1.0
-	 */
-	@Parameter
-	private String version;
 	
 	/**
 	 * api开发环境的url
@@ -103,15 +103,15 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 		if(name != null) {
 			builder.setName(name);
 		}
+		if(version != null) {
+			builder.setVersion(version);
+		}
 		if(path != null) {
 			builder.setPath(path);
 		}
 		
 		if(arrayNotEmpty(authors)) {
 			builder.setAuthors(authors);
-		}
-		if(version != null) {
-			builder.setVersion(version);
 		}
 		
 		if(arrayNotEmpty(devEnvironmentUrls)) {
