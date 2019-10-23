@@ -14,7 +14,7 @@ public class CommonParam {
 	 * 通用参数的结构, 值包括 [object, array, object_or_array], 不区分大小写, 默认值为object
 	 * object标识为对象结构, array标识为数组/集合结构, object_or_array标识为对象或数组/集合结构
 	 */
-	private String structureType = "object";
+	private String struct = "object";
 	
 	/**
 	 * 对应配置类的全路径
@@ -25,10 +25,10 @@ public class CommonParam {
 		return ValidationUtil.classExists(clz);
 	}
 	
-	public ParamStructureType getStructureType() {
-		if("array".equalsIgnoreCase(structureType)) {
+	public ParamStructureType getStruct() {
+		if("array".equalsIgnoreCase(struct)) {
 			return ParamStructureType.ARRAY;
-		}else if("object_or_array".equalsIgnoreCase(structureType)) {
+		}else if("object_or_array".equalsIgnoreCase(struct)) {
 			return ParamStructureType.OBJECT_OR_ARRAY;
 		}else {
 			return ParamStructureType.OBJECT;

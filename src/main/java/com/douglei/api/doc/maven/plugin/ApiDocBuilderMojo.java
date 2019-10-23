@@ -125,16 +125,16 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 		}
 		
 		if(header != null && header.unEmpty()) {
-			builder.setCommonHeader(header.getStructureType(), header.getClz());
+			builder.setCommonHeader(header.getStruct(), header.getClz());
 		}
 		if(url != null && url.unEmpty()) {
-			builder.setCommonUrl(url.getStructureType(), url.getClz());
+			builder.setCommonUrl(url.getStruct(), url.getClz());
 		}
 		if(request != null && request.unEmpty()) {
-			builder.setCommonRequest(request.getStructureType(), request.getClz());
+			builder.setCommonRequest(request.getStruct(), request.getClz());
 		}
 		if(response != null && response.unEmpty()) {
-			builder.setCommonResponse(response.getStructureType(), response.getClz());
+			builder.setCommonResponse(response.getStruct(), response.getClz());
 		}
 		
 		if(arrayNotEmpty(scanPackages)) {
@@ -151,6 +151,7 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	
 	// 获取builder实例
 	private ApiDocBuilder getBuilder() {
+		logger.info("{}生成api文档的类型={}", ApiDocBuilder.logInfoLevelPrefix, apiDocType);
 		if("folder".equalsIgnoreCase(apiDocType)) {
 			return new ApiFolderBuilder();
 		}else {
