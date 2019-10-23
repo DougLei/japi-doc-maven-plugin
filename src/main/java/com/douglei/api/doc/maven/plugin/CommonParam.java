@@ -1,6 +1,6 @@
 package com.douglei.api.doc.maven.plugin;
 
-import com.douglei.api.doc.enums.ParamStructType;
+import com.douglei.api.doc.types.ParamStructType;
 import com.douglei.tools.utils.reflect.ClassLoadUtil;
 import com.douglei.tools.utils.reflect.ValidationUtil;
 
