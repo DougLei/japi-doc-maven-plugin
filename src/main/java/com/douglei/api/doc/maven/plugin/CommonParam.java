@@ -1,6 +1,6 @@
 package com.douglei.api.doc.maven.plugin;
 
-import com.douglei.api.doc.enums.ParamStructureType;
+import com.douglei.api.doc.enums.ParamStructType;
 import com.douglei.tools.utils.reflect.ClassLoadUtil;
 import com.douglei.tools.utils.reflect.ValidationUtil;
 
@@ -25,13 +25,13 @@ public class CommonParam {
 		return ValidationUtil.classExists(clz);
 	}
 	
-	public ParamStructureType getStruct() {
+	public ParamStructType getStruct() {
 		if("array".equalsIgnoreCase(struct)) {
-			return ParamStructureType.ARRAY;
+			return ParamStructType.ARRAY;
 		}else if("object_or_array".equalsIgnoreCase(struct)) {
-			return ParamStructureType.OBJECT_OR_ARRAY;
+			return ParamStructType.OBJECT_OR_ARRAY;
 		}else {
-			return ParamStructureType.OBJECT;
+			return ParamStructType.OBJECT;
 		}
 	}
 	
