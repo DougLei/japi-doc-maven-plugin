@@ -151,7 +151,7 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	
 	// 获取builder实例
 	private ApiDocBuilder getBuilder() {
-		logger.info("{}生成api文档的类型={}", ApiDocBuilder.logInfoLevelPrefix, apiDocType);
+		logger.info("生成api文档的类型={}", apiDocType);
 		if("folder".equalsIgnoreCase(apiDocType)) {
 			return new ApiFolderBuilder();
 		}else {
