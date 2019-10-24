@@ -96,7 +96,6 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	@Parameter
 	private String[] scanPackages;
 	
-	
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		ApiDocBuilder builder = getBuilder();
