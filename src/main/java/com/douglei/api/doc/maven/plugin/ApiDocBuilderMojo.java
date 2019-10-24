@@ -1,13 +1,19 @@
 package com.douglei.api.doc.maven.plugin;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +27,7 @@ import com.douglei.tools.utils.ExceptionUtil;
  * @author DougLei
  */
 @Mojo(name = "apiDocBuilder", defaultPhase = LifecyclePhase.COMPILE)
+@Execute(phase = LifecyclePhase.COMPILE)
 public class ApiDocBuilderMojo extends AbstractMojo {
 	private static final Logger logger = LoggerFactory.getLogger(ApiDocBuilderMojo.class);
 	
@@ -96,8 +103,37 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	@Parameter
 	private String[] scanPackages;
 	
+	/**
+	 * 当前使用插件的项目
+	 */
+	@Parameter(defaultValue="${project}", readonly=true, required=true)
+	private MavenProject currentProject;
+	
+	private ClassLoader projectLoader;
+	private ClassLoader getClassLoader() throws MojoExecutionException{
+        if(projectLoader==null){
+            try{
+                List<String> classpathElements = currentProject.getCompileClasspathElements();
+                URL urls[] = new URL[classpathElements.size()];
+                for (int i=0; i<classpathElements.size();i++){
+                    urls[i] = new File( (String) classpathElements.get(i)).toURI().toURL();
+                }
+                projectLoader=new URLClassLoader(urls, getClass().getClassLoader());
+                
+               Class<?> clz = projectLoader.loadClass("com.ibs.i18n.controller.I18nMessageController");
+               System.out.println(clz);
+            }catch (Exception e){
+                throw new MojoExecutionException("Couldn't create a project classloader.", e);
+            }
+        }
+        return projectLoader;
+	} 
+	
+	
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		getClassLoader();
+		
 		ApiDocBuilder builder = getBuilder();
 		if(name != null) {
 			builder.setName(name);
