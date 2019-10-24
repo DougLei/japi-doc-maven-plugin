@@ -2,6 +2,7 @@ package com.douglei.api.doc.maven.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
@@ -13,7 +14,6 @@ import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,36 +104,13 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	private String[] scanPackages;
 	
 	/**
-	 * 当前使用插件的项目
+	 * 当前使用插件的项目的classpath根路径, 即target文件夹的路径
 	 */
-	@Parameter(defaultValue="${project}", readonly=true, required=true)
-	private MavenProject currentProject;
-	
-	private ClassLoader projectLoader;
-	private ClassLoader getClassLoader() throws MojoExecutionException{
-        if(projectLoader==null){
-            try{
-                List<String> classpathElements = currentProject.getCompileClasspathElements();
-                URL urls[] = new URL[classpathElements.size()];
-                for (int i=0; i<classpathElements.size();i++){
-                    urls[i] = new File( (String) classpathElements.get(i)).toURI().toURL();
-                }
-                projectLoader=new URLClassLoader(urls, getClass().getClassLoader());
-                
-               Class<?> clz = projectLoader.loadClass("com.ibs.i18n.controller.I18nMessageController");
-               System.out.println(clz);
-            }catch (Exception e){
-                throw new MojoExecutionException("Couldn't create a project classloader.", e);
-            }
-        }
-        return projectLoader;
-	} 
-	
+	@Parameter(defaultValue="${project.compileClasspathElements}", readonly=true, required=true)
+	private List<String> currentProjectClasspathRoot;
 	
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		getClassLoader();
-		
 		ApiDocBuilder builder = getBuilder();
 		if(name != null) {
 			builder.setName(name);
@@ -177,7 +154,7 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 		}
 		
 		try {
-			builder.build();
+			builder.setClassLoader(getCurrentProjectClassLoader()).build();
 			logger.info("api文档创建完成");
 		} catch (IOException e) {
 			logger.error("api文档创建时出现异常: {}", ExceptionUtil.getExceptionDetailMessage(e));
@@ -197,5 +174,14 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	// 判断array是否不为空
 	private boolean arrayNotEmpty(String[] array) {
 		return array != null && array.length > 0;
+	}
+	
+	// 获取当前项目的类加载器
+	private ClassLoader getCurrentProjectClassLoader() throws MalformedURLException {
+		URL[] urls = new URL[currentProjectClasspathRoot.size()];
+		for (byte i=0;i<currentProjectClasspathRoot.size();i++) {
+			urls[i] = new File(currentProjectClasspathRoot.get(i)).toURI().toURL();
+		}
+		return new URLClassLoader(urls);
 	}
 }
