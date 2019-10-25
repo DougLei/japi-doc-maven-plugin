@@ -4,21 +4,32 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 
 import com.douglei.api.doc.ApiDocBuilder;
 import com.douglei.api.doc.ApiFolderBuilder;
 import com.douglei.api.doc.ApiZipBuilder;
-import com.douglei.tools.utils.ExceptionUtil;
 
 /**
  * 
@@ -26,7 +37,6 @@ import com.douglei.tools.utils.ExceptionUtil;
  */
 @Mojo(name = "apiDocBuilder", defaultPhase = LifecyclePhase.COMPILE)
 public class ApiDocBuilderMojo extends AbstractMojo {
-	private static final Logger logger = LoggerFactory.getLogger(ApiDocBuilderMojo.class);
 	
 	/**
 	 * 生成api文档的类型, 值包括 [zip, folder], 不区分大小写, 默认值为zip
@@ -127,34 +137,36 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 			builder.setProdEnvironmentUrls(prodEnvironmentUrls);
 		}
 		
-		if(header != null && header.unEmpty()) {
-			builder.setCommonHeader(header.getStruct(), header.getClz());
-		}
-		if(url != null && url.unEmpty()) {
-			builder.setCommonUrl(url.getStruct(), url.getClz());
-		}
-		if(request != null && request.unEmpty()) {
-			builder.setCommonRequest(request.getStruct(), request.getClz());
-		}
-		if(response != null && response.unEmpty()) {
-			builder.setCommonResponse(response.getStruct(), response.getClz());
-		}
-		
 		if(arrayNotEmpty(scanPackages)) {
 			builder.setScanPackages(scanPackages);
 		}
 		
 		try {
-			builder.setClassLoader(getCurrentProjectClassLoader()).build();
-			logger.info("api文档创建完成");
+			ClassLoader classloader = getCurrentProjectClassLoader();
+			
+			if(header != null && header.unEmpty(classloader)) {
+				builder.setCommonHeader(header.getStruct(), header.getClz(classloader));
+			}
+			if(url != null && url.unEmpty(classloader)) {
+				builder.setCommonUrl(url.getStruct(), url.getClz(classloader));
+			}
+			if(request != null && request.unEmpty(classloader)) {
+				builder.setCommonRequest(request.getStruct(), request.getClz(classloader));
+			}
+			if(response != null && response.unEmpty(classloader)) {
+				builder.setCommonResponse(response.getStruct(), response.getClz(classloader));
+			}
+			
+			builder.setClassLoader(classloader).build();
+			getLog().info("api文档创建完成");
 		} catch (Exception e) {
-			logger.error("api文档创建时出现异常: {}", ExceptionUtil.getExceptionDetailMessage(e));
+			getLog().error("api文档创建时出现异常", e);
 		}
 	}
 	
 	// 获取builder实例
 	private ApiDocBuilder getBuilder() {
-		logger.info("生成api文档的类型={}", apiDocType);
+		getLog().info("生成api文档的类型="+apiDocType);
 		if("folder".equalsIgnoreCase(apiDocType)) {
 			return new ApiFolderBuilder();
 		}else {
@@ -167,18 +179,63 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 		return array != null && array.length > 0;
 	}
 	
+	
+	// ----------------------------------------------------------------------------------------------------
 	/**
-	 * 当前使用插件的项目的classpath根路径, 即target文件夹的路径
+	 * 当前使用插件的项目对象
 	 */
-	@Parameter(defaultValue="${project.compileClasspathElements}", readonly=true, required=true)
-	private List<String> currentProjectCompileClasspathElements;
+	@Parameter(defaultValue="${project}", readonly=true, required=true)
+	private MavenProject currentProject;
+	
+	@Component
+	private ProjectBuilder projectBuilder;
+	
+	@Parameter( defaultValue = "${session}", readonly = true, required = true )
+	protected MavenSession session;
+	
+	@Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
+	private List<ArtifactRepository> remoteRepositories;
+	
+	@Component
+	private ArtifactResolver artifactResolver;
+	
+	private void addParentArtifacts(MavenProject project, Set<Artifact> artifacts) throws ArtifactResolverException {
+		while(project.hasParent()) {
+			project = project.getParent();
+			if(artifacts.contains(project.getArtifact())) {
+				break;
+			}
+			ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest();
+			Artifact resolvedArtifact = artifactResolver.resolveArtifact(buildingRequest, project.getArtifact()).getArtifact();
+			artifacts.add(resolvedArtifact);
+		}
+	}
+	
+	private ProjectBuildingRequest newResolveArtifactProjectBuildingRequest() {
+		ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
+		buildingRequest.setRemoteRepositories(remoteRepositories);
+		return buildingRequest;
+	}
 	
 	// 获取当前项目的类加载器
-	private ClassLoader getCurrentProjectClassLoader() throws MalformedURLException {
-		URL[] urls = new URL[currentProjectCompileClasspathElements.size()];
+	private ClassLoader getCurrentProjectClassLoader() throws MalformedURLException, DependencyResolutionRequiredException, ProjectBuildingException, ArtifactResolverException {
+		
+        Set<Artifact> artifacts = currentProject.getArtifacts();
+        for (Artifact artifact : new ArrayList<Artifact>(artifacts)){
+            addParentArtifacts(projectBuilder.build(artifact, session.getProjectBuildingRequest()).getProject(), artifacts);
+        }
+        addParentArtifacts(currentProject, artifacts);
+        System.out.println(artifacts.size());
+        
+        
+        
+		List<String> currentProjectCompileClasspathElements = currentProject.getCompileClasspathElements();
+		URL[] urls = new URL[currentProjectCompileClasspathElements .size()];
 		for (byte i=0;i<currentProjectCompileClasspathElements.size();i++) {
 			urls[i] = new File(currentProjectCompileClasspathElements.get(i)).toURI().toURL();
 		}
 		return new URLClassLoader(urls);
 	}
+	
+	
 }

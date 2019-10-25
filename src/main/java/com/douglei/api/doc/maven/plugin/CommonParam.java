@@ -1,8 +1,6 @@
 package com.douglei.api.doc.maven.plugin;
 
 import com.douglei.api.doc.types.ParamStructType;
-import com.douglei.tools.utils.reflect.ClassLoadUtil;
-import com.douglei.tools.utils.reflect.ValidationUtil;
 
 /**
  * 通用参数
@@ -21,8 +19,13 @@ public class CommonParam {
 	 */
 	private String clz;
 	
-	public boolean unEmpty() {
-		return ValidationUtil.classExists(clz);
+	public boolean unEmpty(ClassLoader classloader) {
+		try {
+			classloader.loadClass(clz);
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
 	}
 	
 	public ParamStructType getStruct() {
@@ -35,7 +38,7 @@ public class CommonParam {
 		}
 	}
 	
-	public Class<?> getClz(){
-		return ClassLoadUtil.loadClass(clz);
+	public Class<?> getClz(ClassLoader classloader) throws ClassNotFoundException{
+		return classloader.loadClass(clz);
 	}
 }
