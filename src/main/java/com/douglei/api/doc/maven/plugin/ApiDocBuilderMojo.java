@@ -1,7 +1,6 @@
 package com.douglei.api.doc.maven.plugin;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -10,7 +9,6 @@ import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -27,7 +25,6 @@ import com.douglei.tools.utils.ExceptionUtil;
  * @author DougLei
  */
 @Mojo(name = "apiDocBuilder", defaultPhase = LifecyclePhase.COMPILE)
-@Execute(phase = LifecyclePhase.COMPILE)
 public class ApiDocBuilderMojo extends AbstractMojo {
 	private static final Logger logger = LoggerFactory.getLogger(ApiDocBuilderMojo.class);
 	
@@ -103,12 +100,6 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	@Parameter
 	private String[] scanPackages;
 	
-	/**
-	 * 当前使用插件的项目的classpath根路径, 即target文件夹的路径
-	 */
-	@Parameter(defaultValue="${project.compileClasspathElements}", readonly=true, required=true)
-	private List<String> currentProjectClasspathRoot;
-	
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		ApiDocBuilder builder = getBuilder();
@@ -156,7 +147,7 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 		try {
 			builder.setClassLoader(getCurrentProjectClassLoader()).build();
 			logger.info("api文档创建完成");
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("api文档创建时出现异常: {}", ExceptionUtil.getExceptionDetailMessage(e));
 		}
 	}
@@ -176,11 +167,17 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 		return array != null && array.length > 0;
 	}
 	
+	/**
+	 * 当前使用插件的项目的classpath根路径, 即target文件夹的路径
+	 */
+	@Parameter(defaultValue="${project.compileClasspathElements}", readonly=true, required=true)
+	private List<String> currentProjectCompileClasspathElements;
+	
 	// 获取当前项目的类加载器
 	private ClassLoader getCurrentProjectClassLoader() throws MalformedURLException {
-		URL[] urls = new URL[currentProjectClasspathRoot.size()];
-		for (byte i=0;i<currentProjectClasspathRoot.size();i++) {
-			urls[i] = new File(currentProjectClasspathRoot.get(i)).toURI().toURL();
+		URL[] urls = new URL[currentProjectCompileClasspathElements.size()];
+		for (byte i=0;i<currentProjectCompileClasspathElements.size();i++) {
+			urls[i] = new File(currentProjectCompileClasspathElements.get(i)).toURI().toURL();
 		}
 		return new URLClassLoader(urls);
 	}
