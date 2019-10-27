@@ -129,22 +129,22 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 		}
 		
 		try {
-			ClassLoader classloader = getCurrentProjectClassLoader();
+			initialClassLoader();
 			
-			if(header != null && header.unEmpty(classloader)) {
-				builder.setCommonHeader(header.getStruct(), header.getClz(classloader));
+			if(header != null && header.unEmpty(jarClassLoader)) {
+				builder.setCommonHeader(header.getStruct(), header.getClz(jarClassLoader));
 			}
-			if(url != null && url.unEmpty(classloader)) {
-				builder.setCommonUrl(url.getStruct(), url.getClz(classloader));
+			if(url != null && url.unEmpty(jarClassLoader)) {
+				builder.setCommonUrl(url.getStruct(), url.getClz(jarClassLoader));
 			}
-			if(request != null && request.unEmpty(classloader)) {
-				builder.setCommonRequest(request.getStruct(), request.getClz(classloader));
+			if(request != null && request.unEmpty(jarClassLoader)) {
+				builder.setCommonRequest(request.getStruct(), request.getClz(jarClassLoader));
 			}
-			if(response != null && response.unEmpty(classloader)) {
-				builder.setCommonResponse(response.getStruct(), response.getClz(classloader));
+			if(response != null && response.unEmpty(jarClassLoader)) {
+				builder.setCommonResponse(response.getStruct(), response.getClz(jarClassLoader));
 			}
 			
-			builder.setClassLoader(classloader).build();
+			builder.setClassLoader(classesClassLoader).build();
 			getLog().info("api文档创建完成");
 		} catch (Exception e) {
 			getLog().error("api文档创建时出现异常", e);
@@ -169,12 +169,16 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	@Parameter(defaultValue="${project.compileClasspathElements}", readonly=true, required=true)
 	private List<String> compileClasspathElements;
 	
-	// 获取当前项目的类加载器
-	private ClassLoader getCurrentProjectClassLoader() throws MalformedURLException  {
+	private ClassLoader jarClassLoader; // jar的类加载器
+	private ClassLoader classesClassLoader;// classes的类加载器
+	
+	// 初始化类加载器
+	private void initialClassLoader() throws MalformedURLException  {
 		URL[] urls = new URL[compileClasspathElements.size()];
 		for(int i=0;i<compileClasspathElements.size();i++) {
 			urls[i] = new File(compileClasspathElements.get(i)).toURI().toURL();
 		}
-		return new URLClassLoader(urls);
+		jarClassLoader = new URLClassLoader(urls, getClass().getClassLoader());
+		classesClassLoader = new URLClassLoader(urls, Thread.currentThread().getContextClassLoader());
 	}
 }
