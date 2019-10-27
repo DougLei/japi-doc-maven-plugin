@@ -4,28 +4,15 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
-import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import com.douglei.api.doc.ApiDocBuilder;
 import com.douglei.api.doc.ApiFolderBuilder;
@@ -35,7 +22,7 @@ import com.douglei.api.doc.ApiZipBuilder;
  * 
  * @author DougLei
  */
-@Mojo(name = "apiDocBuilder", defaultPhase = LifecyclePhase.COMPILE)
+@Mojo(name = "apiDocBuilder", requiresDependencyResolution = ResolutionScope.TEST, defaultPhase = LifecyclePhase.COMPILE)
 public class ApiDocBuilderMojo extends AbstractMojo {
 	
 	/**
@@ -179,63 +166,15 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 		return array != null && array.length > 0;
 	}
 	
-	
-	// ----------------------------------------------------------------------------------------------------
-	/**
-	 * 当前使用插件的项目对象
-	 */
-	@Parameter(defaultValue="${project}", readonly=true, required=true)
-	private MavenProject currentProject;
-	
-	@Component
-	private ProjectBuilder projectBuilder;
-	
-	@Parameter( defaultValue = "${session}", readonly = true, required = true )
-	protected MavenSession session;
-	
-	@Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
-	private List<ArtifactRepository> remoteRepositories;
-	
-	@Component
-	private ArtifactResolver artifactResolver;
-	
-	private void addParentArtifacts(MavenProject project, Set<Artifact> artifacts) throws ArtifactResolverException {
-		while(project.hasParent()) {
-			project = project.getParent();
-			if(artifacts.contains(project.getArtifact())) {
-				break;
-			}
-			ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest();
-			Artifact resolvedArtifact = artifactResolver.resolveArtifact(buildingRequest, project.getArtifact()).getArtifact();
-			artifacts.add(resolvedArtifact);
-		}
-	}
-	
-	private ProjectBuildingRequest newResolveArtifactProjectBuildingRequest() {
-		ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
-		buildingRequest.setRemoteRepositories(remoteRepositories);
-		return buildingRequest;
-	}
+	@Parameter(defaultValue="${project.compileClasspathElements}", readonly=true, required=true)
+	private List<String> compileClasspathElements;
 	
 	// 获取当前项目的类加载器
-	private ClassLoader getCurrentProjectClassLoader() throws MalformedURLException, DependencyResolutionRequiredException, ProjectBuildingException, ArtifactResolverException {
-		
-        Set<Artifact> artifacts = currentProject.getArtifacts();
-        for (Artifact artifact : new ArrayList<Artifact>(artifacts)){
-            addParentArtifacts(projectBuilder.build(artifact, session.getProjectBuildingRequest()).getProject(), artifacts);
-        }
-        addParentArtifacts(currentProject, artifacts);
-        System.out.println(artifacts.size());
-        
-        
-        
-		List<String> currentProjectCompileClasspathElements = currentProject.getCompileClasspathElements();
-		URL[] urls = new URL[currentProjectCompileClasspathElements .size()];
-		for (byte i=0;i<currentProjectCompileClasspathElements.size();i++) {
-			urls[i] = new File(currentProjectCompileClasspathElements.get(i)).toURI().toURL();
+	private ClassLoader getCurrentProjectClassLoader() throws MalformedURLException  {
+		URL[] urls = new URL[compileClasspathElements.size()];
+		for(int i=0;i<compileClasspathElements.size();i++) {
+			urls[i] = new File(compileClasspathElements.get(i)).toURI().toURL();
 		}
 		return new URLClassLoader(urls);
 	}
-	
-	
 }
