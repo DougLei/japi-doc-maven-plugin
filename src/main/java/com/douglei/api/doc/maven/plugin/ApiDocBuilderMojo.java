@@ -144,7 +144,7 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 				builder.setCommonResponse(response.getStruct(), response.getClz(jarClassLoader));
 			}
 			
-			builder.setClassLoader(classesClassLoader).build();
+			builder.setClassLoader(jarClassLoader).build();
 			getLog().info("api文档创建完成");
 		} catch (Exception e) {
 			getLog().error("api文档创建时出现异常", e);

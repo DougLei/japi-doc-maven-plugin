@@ -1,0 +1,321 @@
+<h3 style="margin-bottom: 0px;">通用说明</h3>
+<table class="table table-hover" id="surls">
+  <caption>各服务地址</caption>
+  <tbody>
+	<tr>
+	  <td rowspan="2" style="vertical-align:middle;border-top: none;" class="col-md-2">开发环境</td>
+	  <td style="font-family: MicrosoftYaHei;border-top: none;">http://192.168.1.111:8080/dev1</td>
+	</tr>
+	<tr>
+	  <td style="font-family: MicrosoftYaHei;">http://192.168.1.111:8080/dev2</td>
+	</tr>
+	<tr>
+	  <td rowspan="2" style="vertical-align:middle" class="col-md-2">测试环境</td>
+	  <td style="font-family: MicrosoftYaHei;">http://192.168.1.111:8081/test1</td>
+	</tr>
+	<tr>
+	  <td style="font-family: MicrosoftYaHei;">http://192.168.1.111:8081/test2</td>
+	</tr>
+
+	<tr>
+	  <td rowspan="2" style="vertical-align:middle" class="col-md-2">生产环境</td>
+	  <td style="font-family: MicrosoftYaHei;">http://192.168.1.111:8082/proc1</td>
+	</tr>
+	<tr>
+	  <td style="font-family: MicrosoftYaHei;">http://192.168.1.111:8082/proc2</td>
+	</tr>
+  </tbody>
+</table>
+
+<table class="table table-hover" id="crhp">
+  <caption>
+	通用请求头参数 
+	<span id="crhpBACK" class="hide_" style="cursor:pointer;margin-left:10px;color:#428bca;" title="返回" alt="返回">&lt;返回</span>
+	<span class="glyphicon glyphicon-info-sign pull-right info" title="查看示例" alt="查看示例" data-toggle="modal" data-target="#requestHeaderParamsEg"></span>
+</caption>
+  <thead>
+	<tr>
+	  <th></th>
+	  <th>参数名</th>
+	  <th>类型</th>
+	  <th>长度</th>
+	  <th>精度</th>
+	  <th>是否必须</th>
+	  <th>默认值</th>
+	  <th>描述</th>
+	</tr>
+  </thead>
+  <tbody>
+	<tr>
+	  <td></td>
+	  <td>_token</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>true</td>
+	  <td>-</td>
+	  <td>登录时系统返回的token值</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>_language</td>
+	  <td>string</td>
+	  <td>5</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>客户端需要的国际化语言, 例如zh_CN</td>
+	</tr>
+	<tr style="cursor: pointer" onClick="toggle('header_log')">
+	  <td style="color: #428bca"><span class="glyphicon glyphicon-chevron-right" id="header_log"></span></td>
+	  <td>_log</td>
+	  <td>string</td>
+	  <td>-</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>提供操作日志相关的信息</td>
+	</tr>
+	<tr name="header_log" class="hide_">
+	  <td></td>
+	  <td>&nbsp;&nbsp;&nbsp;&nbsp;batch</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>操作批次, 用来区分是否是同一次操作的请求</td>
+	</tr>
+	<tr name="header_log" class="hide_" style="cursor: pointer" onClick="toggle('header_log_stillSub')">
+	  <td style="color: #428bca"><span class="glyphicon glyphicon-chevron-right" id="header_log_stillSub"></span></td>
+	  <td>&nbsp;&nbsp;&nbsp;&nbsp;stillSub</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>这个也是对象</td>
+	</tr>
+	<tr name="header_log_stillSub" class="hide_">
+	  <td></td>
+	  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>姓名</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>other</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>测试用</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>other</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>测试用</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>other</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>测试用</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>other</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>测试用</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>other</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>测试用</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>other</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>测试用</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>other</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>测试用</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>other</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>测试用</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>other</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>测试用</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>other</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>测试用</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>other</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>测试用</td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td>other</td>
+	  <td>string</td>
+	  <td>36</td>
+	  <td>-</td>
+	  <td>false</td>
+	  <td>-</td>
+	  <td>测试用</td>
+	</tr>
+  </tbody>
+</table>
+<!-- 请求头参数示例弹框 -->
+<div class="modal fade" id="requestHeaderParamsEg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="myModalLabel">
+					请求头参数示例
+				</h4>
+			</div>
+			<div class="modal-body" id="requestHeaderParamsEgContent">
+<pre id="requestHeaderParamsEgContentPRE">
+{
+"_token":"string",
+"_language":"zh_CN",
+"_log":"{"batch":"","level":"","description":"","moduleId":"","moduleName":"","componentId":"","componentName":"","funcId":"","funcName":"","clientType":"","clientInstanceName":"","clientIp":"","clientMac":""}"
+}
+</pre>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onClick="copy2clipboard('requestHeaderParamsEgContent')">复制</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<table class="table table-hover" id="crup">
+  <caption>
+	通用请求URL参数
+	<span id="crupBACK" class="hide_" style="cursor:pointer;margin-left:10px;color:#428bca;" title="返回" alt="返回">&lt;返回</span>
+  </caption>
+  <tbody>
+	<tr>
+	  <td style="border:0px;background-color:#f5f5f5;cursor:pointer;">
+		通用请求URL参数<br/>
+		通用请求URL参数<br/>
+		通用请求URL参数<br/>
+		通用请求URL参数<br/>
+		通用请求URL参数<br/>
+		通用请求URL参数<br/>
+		通用请求URL参数<br/>
+		通用请求URL参数
+	  </td>
+	</tr>
+  </tbody>
+</table>
+<table class="table table-hover" id="creqbp">
+  <caption>
+	通用请求体参数
+	<span id="creqbpBACK" class="hide_" style="cursor:pointer;margin-left:10px;color:#428bca;" title="返回" alt="返回">&lt;返回</span>
+  </caption>
+  <tbody>
+	<tr>
+	  <td style="border:0px;background-color:#f5f5f5;cursor:pointer;">
+		通用请求体参数<br/>
+		通用请求体参数<br/>
+		通用请求体参数<br/>
+		通用请求体参数<br/>
+		通用请求体参数<br/>
+		通用请求体参数<br/>
+		通用请求体参数<br/>
+		通用请求体参数
+	  </td>
+	</tr>
+  </tbody>
+</table>
+<table class="table table-hover" id="crbp">
+  <caption>
+	通用响应体参数
+	<span id="crbpBACK" class="hide_" style="cursor:pointer;margin-left:10px;color:#428bca;" title="返回" alt="返回">&lt;返回</span>
+  </caption>
+  <tbody>
+	<tr>
+	  <td style="border:0px;background-color:#f5f5f5;cursor:pointer;">
+		通用响应体参数<br/>
+		通用响应体参数<br/>
+		通用响应体参数<br/>
+		通用响应体参数<br/>
+		通用响应体参数<br/>
+		通用响应体参数<br/>
+		通用响应体参数<br/>
+		通用响应体参数
+	  </td>
+	</tr>
+  </tbody>
+</table>
+ <script type="text/javascript">
+	var hideState = {
+		header_log: true,
+		header_log_stillSub: true
+	};
+</script>
