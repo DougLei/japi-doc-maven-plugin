@@ -17,6 +17,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import com.douglei.api.doc.ApiDocBuilder;
 import com.douglei.api.doc.ApiFolderBuilder;
 import com.douglei.api.doc.ApiZipBuilder;
+import com.douglei.api.doc.types.entity.DataTypeMatchEntity;
 
 /**
  * 
@@ -97,6 +98,12 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	@Parameter
 	private String[] scanPackages;
 	
+	/**
+	 * 自定义的一些数据类型匹配实体
+	 */
+	@Parameter
+	private DataTypeMatchEntity[] dataTypeMatchEntities;
+	
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		ApiDocBuilder builder = getBuilder();
@@ -130,6 +137,7 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 		
 		try {
 			ClassLoader classloader = getClassLoader();
+			builder.setClassLoader(classloader);
 			
 			if(header != null && header.unEmpty(classloader)) {
 				builder.setCommonHeader(header.getStruct(), header.getClz(classloader));
@@ -144,7 +152,11 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 				builder.setCommonResponse(response.getStruct(), response.getClz(classloader));
 			}
 			
-			builder.setClassLoader(classloader).build();
+			if(arrayNotEmpty(dataTypeMatchEntities)) {
+				builder.setDataTypeMatchEntities(dataTypeMatchEntities);
+			}
+			
+			builder.build();
 			getLog().info("api文档创建完成");
 		} catch (Exception e) {
 			getLog().error("api文档创建时出现异常", e);
@@ -162,7 +174,7 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	}
 	
 	// 判断array是否不为空
-	private boolean arrayNotEmpty(String[] array) {
+	private boolean arrayNotEmpty(Object[] array) {
 		return array != null && array.length > 0;
 	}
 	
