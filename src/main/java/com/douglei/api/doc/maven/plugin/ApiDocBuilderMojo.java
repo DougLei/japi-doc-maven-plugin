@@ -140,16 +140,16 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 			builder.setClassLoader(classloader);
 			
 			if(header != null && header.unEmpty(classloader)) {
-				builder.setCommonHeader(header.getStruct(), header.getClz(classloader));
+				builder.setCommonHeader(header.getStruct(), header.getClz());
 			}
 			if(url != null && url.unEmpty(classloader)) {
-				builder.setCommonUrl(url.getStruct(), url.getClz(classloader));
+				builder.setCommonUrl(url.getStruct(), url.getClz());
 			}
 			if(request != null && request.unEmpty(classloader)) {
-				builder.setCommonRequest(request.getStruct(), request.getClz(classloader));
+				builder.setCommonRequest(request.getStruct(), request.getClz());
 			}
 			if(response != null && response.unEmpty(classloader)) {
-				builder.setCommonResponse(response.getStruct(), response.getClz(classloader));
+				builder.setCommonResponse(response.getStruct(), response.getClz());
 			}
 			
 			if(arrayNotEmpty(dataTypeMatchEntities)) {

@@ -18,10 +18,11 @@ public class CommonParam {
 	 * 对应配置类的全路径
 	 */
 	private String clz;
+	private Class<?> cls;
 	
 	public boolean unEmpty(ClassLoader classloader) {
 		try {
-			classloader.loadClass(clz);
+			cls = classloader.loadClass(clz);
 			return true;
 		} catch (ClassNotFoundException e) {
 			return false;
@@ -38,7 +39,7 @@ public class CommonParam {
 		}
 	}
 	
-	public Class<?> getClz(ClassLoader classloader) throws ClassNotFoundException{
-		return classloader.loadClass(clz);
+	public Class<?> getClz() {
+		return cls;
 	}
 }
