@@ -74,6 +74,14 @@
 						<scanPackages>
 							<scanPackage>com</scanPackage>
 						</scanPackages>
+						
+						<!-- 该实体对应的功能, 是根据类型, 自动匹配到 {@link DataType} 的值, 程序默认内置了一些映射, 如果出现没有的, 则可以通过该方法, 增加新的映射 -->
+						<dataTypeMatchEntities>
+							<dataTypeMatchEntity>
+								<class_>java.lang.String</class_><!-- 类的全路径 -->
+								<dataType>STRING</dataType><!-- 对应 DataType的类型, 值包括INTEGER, DOUBLE, STRING, DATE, BOOLEAN, OBJECT, 不区分大小写 -->
+							</dataTypeMatchEntity>
+						</dataTypeMatchEntities>
 					</configuration>
 				</execution>
 			</executions>
