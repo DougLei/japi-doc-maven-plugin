@@ -34,10 +34,15 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	private String apiDocType = "zip";
 	
 	/**
-	 * 生成api文档的名称和标题, 默认名为 api文档
+	 * 生成api文档的文件名, 默认名为 api文档
 	 */
 	@Parameter
-	private String name;
+	private String fileName;
+	/**
+	 * 生成api文档的标题, 默认名为 api文档
+	 */
+	@Parameter
+	private String title;
 	/**
 	 * api版本, 默认为1.0
 	 */
@@ -107,8 +112,11 @@ public class ApiDocBuilderMojo extends AbstractMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		ApiDocBuilder builder = getBuilder();
-		if(name != null) {
-			builder.setName(name);
+		if(fileName != null) {
+			builder.setFileName(fileName);
+		}
+		if(title != null) {
+			builder.setTitle(title);
 		}
 		if(version != null) {
 			builder.setVersion(version);

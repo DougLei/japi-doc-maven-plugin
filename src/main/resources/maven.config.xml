@@ -16,8 +16,10 @@
 							zip标识生成压缩包, folder标识生成文件夹
 						-->
 						<apiDocType>zip</apiDocType>
-						<!-- 生成api文档的名称和标题, 默认名为 api文档 -->
-						<name>api文档</name>
+						<!-- 生成api文档的文件名, 默认名为 api文档 -->
+						<fileName>api文档</fileName>
+						<!-- 生成api文档的标题, 默认名为 api文档 -->
+						<title>api文档</title>
 						<!-- api版本, 默认为1.0 -->
 						<version></version>
 						<!-- 生成api文档的绝对路径, 默认在当前项目的target目录下 -->
